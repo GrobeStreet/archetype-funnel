@@ -1,0 +1,1 @@
+{"name":"revenue-leak-reports","version":"2.0.0","private":true,"type":"module","scripts":{"build":"echo static site ready","dev":"netlify dev"},"dependencies":{"@netlify/functions":"latest"},"devDependencies":{}}
