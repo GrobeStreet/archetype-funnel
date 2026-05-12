@@ -10,7 +10,7 @@ const loadingSteps = [
   'Reading public homepage copy...',
   'Checking headlines, buttons, metadata, and forms...',
   'Looking for trust proof and buyer-path friction...',
-  'Building your preview report...'
+  'Building your executive leak preview...'
 ];
 
 form?.addEventListener('submit', async (event) => {
@@ -60,10 +60,15 @@ function list(items = []) {
   return items.filter(Boolean).map((item) => `<li>${escapeHtml(item)}</li>`).join('');
 }
 
+function riskTone(report) {
+  const risk = String(report.riskLevel || report.verdict || 'Elevated').toLowerCase();
+  if (risk.includes('critical') || risk.includes('major')) return { label: 'Critical', className: 'critical', copy: 'Several high-friction signals showed up in the public scan.' };
+  if (risk.includes('strong') || risk.includes('low')) return { label: 'Opportunity', className: 'opportunity', copy: 'The page has usable foundations, but the first-pass scan still found fixable conversion opportunities.' };
+  return { label: 'Elevated', className: 'elevated', copy: 'The scan found enough friction to justify a closer diagnosis.' };
+}
+
 function renderReport(report) {
-  const score = Number(report.score || 6);
-  const scoreColor = score >= 8 ? 'var(--green)' : score >= 6 ? 'var(--gold)' : 'var(--red)';
-  const scoreLabel = report.verdict || (score >= 8 ? 'Strong base — a few leaks left' : score >= 6 ? 'Leaks found — worth fixing' : 'Major leaks found — fix these first');
+  const tone = riskTone(report);
   const hostname = escapeHtml(report.host || report.url || '');
   const detected = report.detected || {};
 
@@ -80,39 +85,33 @@ function renderReport(report) {
 
   const signals = `
     <div class="signal-grid">
-      <div class="signal-card"><b>Headline detected</b><p>${escapeHtml(detected.headline || 'No clear H1 headline detected in the public HTML.')}</p></div>
-      <div class="signal-card"><b>SEO description</b><p>${escapeHtml(detected.meta || 'No strong meta description detected.')}</p></div>
-      <div class="signal-card"><b>Buttons / links found</b><p>${detected.buttons?.length ? detected.buttons.slice(0, 6).map(escapeHtml).join(', ') : 'No clear CTA buttons detected.'}</p></div>
-      <div class="signal-card"><b>Trust signals</b><p>${detected.proofSignals?.length ? detected.proofSignals.slice(0, 5).map(escapeHtml).join(', ') : 'No obvious reviews, guarantees, ratings, or credentials detected near the scanned text.'}</p></div>
+      <div class="signal-card"><span>Headline detected</span><b>${escapeHtml(detected.headline || 'No clear H1 headline detected')}</b></div>
+      <div class="signal-card"><span>SEO / social description</span><b>${escapeHtml(detected.meta || 'No strong meta description detected')}</b></div>
+      <div class="signal-card"><span>Buttons / links found</span><b>${detected.buttons?.length ? detected.buttons.slice(0, 6).map(escapeHtml).join(', ') : 'No clear CTA buttons detected'}</b></div>
+      <div class="signal-card"><span>Trust proof signals</span><b>${detected.proofSignals?.length ? detected.proofSignals.slice(0, 5).map(escapeHtml).join(', ') : 'No obvious proof language detected'}</b></div>
     </div>`;
 
   result.innerHTML = `
     <div class="result-reveal">
-      <div class="result-header">
-        <div class="result-ding">⚡ Free preview built from public site signals</div>
+      <div class="result-header executive-result">
+        <div class="result-ding">Free preview built from public site signals</div>
         <h2 class="result-title">Revenue Leak Preview for <span class="result-domain">${hostname}</span></h2>
-        <div class="result-score-wrap">
-          <div class="result-score-ring">
-            <svg viewBox="0 0 120 120" class="score-svg">
-              <circle cx="60" cy="60" r="50" class="score-track"/>
-              <circle cx="60" cy="60" r="50" class="score-fill" style="--score-pct:${score * 10}%;stroke:${scoreColor}"/>
-            </svg>
-            <div class="score-number" style="color:${scoreColor}">${score}<span>/10</span></div>
-          </div>
-          <div class="result-score-label">
-            <div class="score-verdict" style="color:${scoreColor}">${escapeHtml(scoreLabel)}</div>
-            <p class="score-sub">This sample uses the actual public copy, metadata, links, forms, and trust signals we can read from the page. The paid report expands this into a full diagnosis and fix plan.</p>
+        <div class="risk-dashboard">
+          <div class="risk-chip ${tone.className}">${tone.label} conversion risk</div>
+          <div class="risk-copy">
+            <h3>${escapeHtml(report.verdict || tone.copy)}</h3>
+            <p>This is not a random grade. It is a first-pass diagnosis based on public copy, metadata, buttons, forms, and proof signals we could actually read.</p>
           </div>
         </div>
       </div>
 
       <div class="card detected-card">
-        <h3>Real signals we found</h3>
+        <div class="section-head-inline"><span>What the scan actually saw</span><b>Public, no-login signals</b></div>
         ${signals}
       </div>
 
       <div class="result-findings-section">
-        <h3 class="findings-heading">Your first leaks on <em>${hostname}</em></h3>
+        <h3 class="findings-heading">First leaks worth reviewing on <em>${hostname}</em></h3>
         <div class="report-findings">${findings}</div>
       </div>
 
@@ -160,7 +159,6 @@ function renderReport(report) {
 
   result.classList.add('show');
   setTimeout(() => result.scrollIntoView({ behavior: 'smooth', block: 'start' }), 80);
-  setTimeout(() => result.querySelector('.score-fill')?.classList.add('score-animated'), 350);
   wireBuyButtons(result);
   document.getElementById('resetBtn')?.addEventListener('click', () => {
     result.classList.remove('show');
