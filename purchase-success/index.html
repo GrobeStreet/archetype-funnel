@@ -1,0 +1,58 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Your Revenue Leak Report</title>
+  <meta name="robots" content="noindex,nofollow" />
+  <link rel="stylesheet" href="/styles.css" />
+  <style>
+    body{background:#05070d;color:#f7f8fc}.report-shell{width:min(980px,92vw);margin:0 auto;padding:44px 0 80px}.report-actions{position:sticky;top:0;z-index:5;background:rgba(5,7,13,.88);backdrop-filter:blur(14px);border-bottom:1px solid rgba(255,255,255,.12);padding:14px 0;margin-bottom:28px}.report-actions .wrap{display:flex;gap:12px;justify-content:space-between;align-items:center}.action-row{display:flex;gap:10px;flex-wrap:wrap}.paid-report{background:linear-gradient(180deg,rgba(255,255,255,.08),rgba(255,255,255,.035));border:1px solid rgba(255,255,255,.12);border-radius:30px;padding:34px;box-shadow:0 30px 100px rgba(0,0,0,.35)}.report-hero{border-bottom:1px solid rgba(255,255,255,.12);padding-bottom:22px;margin-bottom:24px}.report-hero h1{font-size:clamp(34px,6vw,64px);line-height:.95;margin:0 0 18px}.report-note{color:#aab6c8}.report-block{border:1px solid rgba(255,255,255,.12);background:rgba(0,0,0,.16);border-radius:22px;padding:22px;margin:16px 0}.report-block h2{font-size:30px;margin:0 0 12px}.report-block h3{font-size:21px;margin:0 0 10px;color:#f6c85f}.report-block p,.report-block li{color:#dbe3f0}.loading-panel{background:linear-gradient(180deg,rgba(255,255,255,.08),rgba(255,255,255,.035));border:1px solid rgba(255,255,255,.12);border-radius:30px;padding:36px;text-align:center}.error-panel{border-color:rgba(255,107,107,.45)}@media print{.report-actions{display:none}body{background:white;color:#111}.paid-report,.report-block{box-shadow:none;border:1px solid #ddd;background:white}.report-block p,.report-block li{color:#111}}
+  </style>
+</head>
+<body>
+  <div class="report-actions">
+    <div class="wrap">
+      <div class="brand"><span class="brand-mark">RL</span> Revenue Leak Reports</div>
+      <div class="action-row">
+        <button class="btn2" id="copyLink">Copy report link</button>
+        <button class="btn2" id="copyReport">Copy report text</button>
+        <button class="btn" onclick="window.print()">Print / Save PDF</button>
+      </div>
+    </div>
+  </div>
+  <main class="report-shell">
+    <div id="status" class="loading-panel">
+      <p class="eyebrow">Generating your report</p>
+      <h1>Your diagnosis is being built.</h1>
+      <p class="muted">Verifying checkout, reading public website signals, and creating your written report.</p>
+      <div class="bar" style="margin-top:22px"><span></span></div>
+    </div>
+    <div id="reportMount"></div>
+  </main>
+  <script>
+    const statusEl = document.getElementById('status');
+    const mount = document.getElementById('reportMount');
+    const params = new URLSearchParams(window.location.search);
+    const sessionId = params.get('session_id') || '';
+    const fallbackUrl = localStorage.getItem('rlr:lastUrl') || '';
+    const fallbackGoal = localStorage.getItem('rlr:lastGoal') || 'More leads';
+    async function build(){
+      try{
+        const res = await fetch('/api/paid-report', {method:'POST', headers:{'content-type':'application/json'}, body:JSON.stringify({session_id:sessionId,url:fallbackUrl,goal:fallbackGoal})});
+        const data = await res.json();
+        if(!res.ok) throw new Error(data.error || 'Could not generate report');
+        statusEl.style.display='none';
+        mount.innerHTML = data.html;
+        try{ localStorage.setItem('rlr:lastReportHtml', data.html); }catch(e){}
+      }catch(err){
+        statusEl.classList.add('error-panel');
+        statusEl.innerHTML = '<p class="eyebrow">Report generation issue</p><h1>We could not generate the report automatically.</h1><p class="muted">'+(err.message||'Unknown error')+'</p><p class="muted">If you just paid, save your Stripe receipt and contact support with the website URL you submitted.</p><a class="btn" href="/">Back to site</a>';
+      }
+    }
+    document.getElementById('copyLink').addEventListener('click', async()=>{await navigator.clipboard.writeText(window.location.href); alert('Report link copied.');});
+    document.getElementById('copyReport').addEventListener('click', async()=>{await navigator.clipboard.writeText(mount.innerText || statusEl.innerText); alert('Report text copied.');});
+    build();
+  </script>
+</body>
+</html>
