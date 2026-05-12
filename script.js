@@ -31,6 +31,7 @@ form?.addEventListener('submit', async (event) => {
     goal: document.getElementById('goal')?.value || 'More leads'
   };
   latestLead = { ...data };
+  try { localStorage.setItem('rlr:lastUrl', data.url); localStorage.setItem('rlr:lastGoal', data.goal); } catch(e) {}
 
   try {
     const response = await fetch('/api/preview', {
@@ -41,6 +42,7 @@ form?.addEventListener('submit', async (event) => {
     const report = await response.json();
     if (!response.ok) throw new Error(report.error || 'Could not run scan');
     latestLead = { ...latestLead, ...report };
+    try { localStorage.setItem('rlr:lastUrl', latestLead.url || data.url); localStorage.setItem('rlr:lastGoal', latestLead.goal || data.goal); } catch(e) {}
     renderReport(report);
   } catch (error) {
     result.innerHTML = `<div class="card error"><h3>Preview scan hit a snag</h3><p>${escapeHtml(error.message || 'Please try again with your homepage URL.')}</p><p>You can still choose a paid report below. We will carry the URL you entered into checkout.</p></div>`;
@@ -171,11 +173,9 @@ function renderReport(report) {
 function getCurrentUrl() {
   return latestLead.url || document.getElementById('url')?.value || '';
 }
-
 function getCurrentGoal() {
   return latestLead.goal || document.getElementById('goal')?.value || 'More leads';
 }
-
 function wireBuyButtons(scope = document) {
   scope.querySelectorAll('.buy').forEach((button) => {
     if (button.dataset.wired === '1') return;
@@ -183,16 +183,18 @@ function wireBuyButtons(scope = document) {
     button.addEventListener('click', async () => {
       const tier = button.dataset.tier || 'main';
       const url = getCurrentUrl();
+      const goal = getCurrentGoal();
       if (!url) {
         document.getElementById('url')?.focus();
         alert('Paste your website URL first so your report knows what to scan.');
         return;
       }
+      try { localStorage.setItem('rlr:lastUrl', url); localStorage.setItem('rlr:lastGoal', goal); } catch(e) {}
       button.disabled = true;
       const oldText = button.textContent;
       button.textContent = 'Opening checkout...';
       try {
-        const payload = { tier, url, goal: getCurrentGoal(), previewId: latestLead.previewId || '' };
+        const payload = { tier, url, goal, previewId: latestLead.previewId || '' };
         const res = await fetch('/api/checkout', {
           method: 'POST',
           headers: { 'content-type': 'application/json' },
@@ -209,5 +211,4 @@ function wireBuyButtons(scope = document) {
     });
   });
 }
-
 wireBuyButtons(document);
