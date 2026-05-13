@@ -1,1 +1,29 @@
-{"name":"revenue-leak-reports","version":"2.0.0","private":true,"type":"module","scripts":{"build":"echo static site ready","dev":"netlify dev"},"dependencies":{"@netlify/functions":"latest"},"devDependencies":{}}
+{
+  "name": "nba-front-office-sim",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev": "next dev",
+    "build": "next build",
+    "start": "next start",
+    "lint": "tsc --noEmit"
+  },
+  "dependencies": {
+    "@next/env": "latest",
+    "@netlify/functions": "latest",
+    "next": "latest",
+    "react": "latest",
+    "react-dom": "latest"
+  },
+  "devDependencies": {
+    "@types/node": "latest",
+    "@types/react": "latest",
+    "@types/react-dom": "latest",
+    "autoprefixer": "latest",
+    "postcss": "latest",
+    "tailwindcss": "latest",
+    "typescript": "latest",
+    "@tailwindcss/postcss": "latest"
+  }
+}
