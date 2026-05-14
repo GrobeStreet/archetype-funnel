@@ -12,7 +12,7 @@ A local-first basketball front office simulation dashboard built with Next.js, T
 
 ## Local data setup
 
-Copy the NBA Warehouse v0.1 files into the `data/` directory:
+The repository includes fictional seed/demo CSVs so the app is playable immediately. To use real NBA Warehouse v0.1 exports, replace the files in the `data/` directory:
 
 ```text
 data/gold_player_value_v01.csv
@@ -21,7 +21,7 @@ data/source_health.csv
 data/source_reconciliation.csv
 ```
 
-The app will still boot without the files, but pages will show empty states until the CSVs are present.
+The committed seed files use fictional players and text-only team abbreviations. The app will still boot if a file is removed, but pages will show empty states for missing CSVs.
 
 ## Run locally
 

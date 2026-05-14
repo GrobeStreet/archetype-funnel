@@ -80,8 +80,8 @@ export function getPlayers(): PlayerValue[] {
       wevLite: pickNumber(row, ['wev_lite', 'wev-lite', 'wev', 'value_over_replacement']),
       tradeValueSeed: pickNumber(row, ['trade_value_seed', 'trade_value', 'value_seed', 'seed_trade_value']),
       availability: pickNumber(row, ['availability', 'availability_score', 'games_pct', 'gp_pct', 'games_played_pct']),
-      offensiveValue: pickNumber(row, ['offensive_value', 'off_value', 'ov', 'offense', 'o_value']),
-      defensiveValue: pickNumber(row, ['defensive_value', 'def_value', 'dv', 'defense', 'd_value']),
+      offensiveValue: pickNumber(row, ['offense_value', 'offensive_value', 'off_value', 'ov', 'offense', 'o_value']),
+      defensiveValue: pickNumber(row, ['defense_value', 'defensive_value', 'def_value', 'dv', 'defense', 'd_value']),
       raw: row
     };
   });
@@ -100,8 +100,8 @@ export function getTeamSeasons(): TeamSeason[] {
       losses: pickNumber(row, ['losses', 'l']),
       pointDifferential: pickNumber(row, ['point_differential', 'point_diff', 'pts_diff', 'diff', 'plus_minus']),
       netRating: pickNumber(row, ['net_rating', 'net_rtg', 'nrtg']),
-      offensiveRating: pickNumber(row, ['offensive_rating', 'off_rtg', 'ortg']),
-      defensiveRating: pickNumber(row, ['defensive_rating', 'def_rtg', 'drtg']),
+      offensiveRating: pickNumber(row, ['off_rating', 'offensive_rating', 'off_rtg', 'ortg']),
+      defensiveRating: pickNumber(row, ['def_rating', 'defensive_rating', 'def_rtg', 'drtg']),
       raw: row
     };
   });
