@@ -1,0 +1,6 @@
+source,status,last_updated,row_count,notes
+gold_player_value_v01,pass,2026-05-14,180,Seed demo file with 6 fictional players for each of 30 teams.
+gold_team_season_summary,pass,2026-05-14,30,Seed demo file with one 2024 summary row for every team abbreviation.
+source_health,pass,2026-05-14,5,Self-reported seed source health checks for local demo mode.
+source_reconciliation,warn,2026-05-14,9,Demo reconciliation includes intentional small deltas to exercise warning badges.
+warehouse_live_export,fail,2026-05-14,0,Real NBA Warehouse export not mounted; fictional seed fallback is active.

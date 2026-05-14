@@ -1,0 +1,10 @@
+source,field,expected,actual,delta,status
+gold_player_value_v01,team_count,30,30,0,pass
+gold_player_value_v01,player_rows,150+,180,+30,pass
+gold_player_value_v01,season,2024,2024,0,pass
+gold_player_value_v01,availability_min,0.4,0.4,0,pass
+gold_team_season_summary,team_rows,30,30,0,pass
+gold_team_season_summary,wins_plus_losses,82,82,0,pass
+source_health,status_values,pass/warn/fail,"pass,warn,fail",0,pass
+source_reconciliation,demo_mode,real warehouse export,fictional seed data,seed fallback,warn
+warehouse_live_export,mounted_file_count,4,0,-4,fail
